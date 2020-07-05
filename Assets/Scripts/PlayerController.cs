@@ -1,40 +1,106 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    Rigidbody rb;
-    // Start is called before the first frame update
+    private Rigidbody rb;
+
+    [SerializeField]
+    private PlayerType playerType;
+
+    [SerializeField]
+    private float speed = 10f;
+
+    [SerializeField]
+    private float boundary = 9f;
+
+    [SerializeField]
+    private float jumpPower = 100f;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        var isClick = Input.GetButtonDown("Horizontal");
-        var horizontal = Input.GetAxisRaw("Horizontal");
-        transform.position += new Vector3(0, 0, 10f * Time.deltaTime);
-        if (isClick)
-        {
-            if (horizontal > Mathf.Epsilon)
-            {
+        float p1Move = Mathf.Epsilon;
+        float p2Move = Mathf.Epsilon;
 
-            transform.position += new Vector3(3f, 0, 0);
-            }
-            else if (horizontal < Mathf.Epsilon)
+        if (playerType == PlayerType.P1)
+        {
+            p1Move = Input.GetAxisRaw("P1Move");
+            
+            if (Input.GetButtonDown("P1Jump") && transform.position.y == 1)
             {
+                rb.AddForce(new Vector3(0, jumpPower, 0));
+            }
+        }
+        else if (playerType == PlayerType.P2 && transform.position.y == 1)
+        {
+            p2Move = Input.GetAxisRaw("P2Move");
+            
+            if (Input.GetButtonDown("P2Jump"))
+            {
+                rb.AddForce(new Vector3(0, jumpPower, 0));
+            }
+        }
+
+        if (Input.GetButtonDown("P1Move"))
+        {
+
+            if (p1Move > Mathf.Epsilon)
+            {
+                if (transform.position.x > boundary)
+                {
+                    return;
+                }
+                transform.position += new Vector3(3f, 0, 0);
+            }
+            else if (p1Move < Mathf.Epsilon)
+            {
+                if (transform.position.x < -boundary)
+                {
+                    return;
+                }
+
                 transform.position += new Vector3(-3f, 0, 0);
 
             }
-
         }
-            if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetButtonDown("P2Move"))
+        {
+
+            if (p2Move > Mathf.Epsilon)
             {
-                Debug.Log("JUMP");
-                rb.AddForce(new Vector3(0, 100f, 0));
+                if (transform.position.x > boundary)
+                {
+                    return;
+                }
+
+                transform.position += new Vector3(3f, 0, 0);
             }
+            else if (p2Move < Mathf.Epsilon)
+            {
+                if (transform.position.x < -boundary)
+                {
+                    return;
+                }
+
+                transform.position += new Vector3(-3f, 0, 0);
+
+            }
+        }
+
+
+
+        transform.position += new Vector3(0, 0, speed * Time.deltaTime);
     }
+}
+
+public enum PlayerType
+{
+    P1 = 1,
+    P2
 }
