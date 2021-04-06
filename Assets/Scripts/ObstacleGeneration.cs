@@ -20,6 +20,10 @@ public class ObstacleGeneration : MonoBehaviour
     private Vector3 finalObsPos;
     public int numberOfInitialObs;
 
+    public int testingStuff;
+
+    public string yoooHello;
+
     // Start is called before the first frame update
     void Start()
     {
